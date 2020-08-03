@@ -10,28 +10,29 @@ import (
 	"net/http"
 )
 
-func main()  {
+func main() {
 	ValidateAddress()
 
 }
 
 type Accounts struct {
-	Succuss bool	`json:"success,omitempty"`
-	Meta map[string]interface{}	`json:"meta,omitempty"`
-	Data []map[string]interface{} `json:"data,omitempty"`
-	StatusCode int	`json:statuscode",omitempty"`
-	Error string	`json:error",omitempty"`
+	Succuss    bool                     `json:"success,omitempty"`
+	Meta       map[string]interface{}   `json:"meta,omitempty"`
+	Data       []map[string]interface{} `json:"data,omitempty"`
+	StatusCode int                      `json:statuscode",omitempty"`
+	Error      string                   `json:error",omitempty"`
 	//Success bool `json:"success"`
 	//Meta map[string]int `json:"meta"`
 	//Data interface{} `json:"data"`
 
 }
+
 //{"success":false,"statusCode":400,"error":"A valid account address is required."}
 
 //获取账户信息
-func account()  {
+func account() {
 
-	resp, err := Get("https://api.trongrid.io/v1/accounts/TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt",nil,nil)
+	resp, err := Get("https://api.trongrid.io/v1/accounts/TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt", nil, nil)
 	if err != nil {
 		// handle error
 	}
@@ -54,11 +55,11 @@ func account()  {
 }
 
 //获取账户历史交易信息
-func transactions()  {
-	url :=  "TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt"
+func transactions() {
+	url := "TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt"
 	parems := make(map[string]string)
-	parems = map[string]string{"limit":"10"}
-	resp, err := Get("https://api.trongrid.io/v1/accounts/"+url+"/transactions",parems,nil)
+	parems = map[string]string{"limit": "10"}
+	resp, err := Get("https://api.trongrid.io/v1/accounts/"+url+"/transactions", parems, nil)
 	if err != nil {
 		// handle error
 	}
@@ -81,16 +82,18 @@ func transactions()  {
 	}
 	//fmt.Println() Println
 }
+
 type Genera struct {
 	PrivateKey string `json:"privatekey"`
-	Address string `json:"address"`
+	Address    string `json:"address"`
 	HexAddress string `json:"hexaddress"`
 }
-//生成随机私钥和相应的账户地址.
-func GenerateAddress()  {
-	url :=  "https://api.trongrid.io/wallet/generateaddress"
 
-	resp, err := Get(url,nil,nil)
+//生成随机私钥和相应的账户地址.
+func GenerateAddress() {
+	url := "https://api.trongrid.io/wallet/generateaddress"
+
+	resp, err := Get(url, nil, nil)
 	if err != nil {
 		// handle error
 	}
@@ -100,22 +103,24 @@ func GenerateAddress()  {
 	//var generateaddress map[string]string
 
 	var df Genera
-	json.Unmarshal(body,&df)
+	json.Unmarshal(body, &df)
 	//fmt.Println(errs)
 	fmt.Println(df)
 }
+
 type Validate struct {
-	Result bool `json:"result"`
+	Result  bool   `json:"result"`
 	Message string `json:"message"`
 }
+
 //检查地址是否格式正确
-func ValidateAddress()  {
+func ValidateAddress() {
 	url := "https://api.trongrid.io/wallet/validateaddress"
 	pare := map[string]string{
-			"address":"TJbmbC8HQBoWFdkPBRTH2KqgpAbmk5cfUb",
+		"address": "TJbmbC8HQBoWFdkPBRTH2KqgpAbmk5cfUb",
 	}
 
-	resp, err := Post(url,pare,nil,nil)
+	resp, err := Post(url, pare, nil, nil)
 	if err != nil {
 		// handle error
 	}
@@ -130,6 +135,23 @@ func ValidateAddress()  {
 
 	fmt.Println(mapResult)
 }
+
+//从指定的密码字符串(注意, 不是私钥)创建地址.
+func CreateAddress() {
+	url := "https://api.trongrid.io/wallet/createaddress"
+	pare := map[string]string{
+		"value": "123123",
+	}
+
+	resp, err := Post(url, pare, nil, nil)
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+
+}
+
 //curl --request GET \
 //--url https://api.trongrid.io/v1/accounts/TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt/transactions
 
