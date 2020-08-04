@@ -8,10 +8,31 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
+	"strconv"
+	"time"
 )
 
 func main() {
-	ValidateAddress()
+	fmt.Println(123)
+	num := 22087933
+	for {
+
+		time.Sleep(time.Second * 5)
+		num++
+		//url := "https://api.trongrid.io/wallet/createaddress"
+		aa := strconv.Itoa(num)
+		url := "https://api.trongrid.io/v1/blocks/" + aa + "/events"
+
+		resp, err := Get(url, nil, nil)
+		if err != nil {
+			// handle error
+		}
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		fmt.Println(string(body))
+		fmt.Println(num)
+	}
 
 }
 
@@ -119,7 +140,6 @@ func ValidateAddress() {
 	pare := map[string]string{
 		"address": "TJbmbC8HQBoWFdkPBRTH2KqgpAbmk5cfUb",
 	}
-
 	resp, err := Post(url, pare, nil, nil)
 	if err != nil {
 		// handle error
@@ -132,28 +152,102 @@ func ValidateAddress() {
 	if errs != nil {
 		fmt.Println("JsonToMapDemo err: ", err)
 	}
-
 	fmt.Println(mapResult)
 }
 
 //从指定的密码字符串(注意, 不是私钥)创建地址.
 func CreateAddress() {
-	url := "https://api.trongrid.io/wallet/createaddress"
+	//url := "https://api.trongrid.io/wallet/createaddress"
+	url := "https://api.shasta.trongrid.io/wallet/createaddress"
 	pare := map[string]string{
-		"value": "123123",
+		"value": "a123123",
 	}
-
 	resp, err := Post(url, pare, nil, nil)
 	if err != nil {
 		// handle error
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	//os.exit(1)
+}
+
+//获取所有 TRC10 列表
+func AssetsTrc10() {
+	url := "https://api.trongrid.io/v1/assets"
+	//mare := map[string]interface{}{"order_by":,"limit":10,"fingerprint":}
+	params := map[string]string{"limit": "4"}
+	resp, err := Get(url, params, nil)
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	//var generateaddress map[string]string
 
 }
 
-//curl --request GET \
-//--url https://api.trongrid.io/v1/accounts/TUD4YXYdj2t1gP5th3A7t97mx1AUmrrQRt/transactions
+//以名字查询 TRC10
+func AssetsName() {
+	name := "CRT"
+	url := "https://api.trongrid.io/v1/assets/" + name + "/list"
+	//mare := map[string]interface{}{"order_by":,"limit":10,"fingerprint":}
+	params := map[string]string{"limit": "4"}
+	resp, err := Get(url, params, nil)
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	//var generateaddress map[string]string
+}
+
+//以 ID 或发行人查询 TRC10
+func Identifier() {
+	url := "https://api.trongrid.io/v1/assets/1003126"
+	//mare := map[string]interface{}{"order_by":,"limit":10,"fingerprint":}
+	//params := map[string]string{"identifier":"1003126"}
+	resp, err := Get(url, nil, nil)
+	//fmt.Println(resp)
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	var df Accounts
+	errs := json.Unmarshal(body, &df)
+	if errs != nil {
+
+	}
+	fmt.Println(df.Succuss)
+	fmt.Println(reflect.TypeOf(df))
+}
+
+//获取合约历史交易信息
+func ContractTransactions() {
+	contract_add := "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
+	url := "https://api.trongrid.io/v1/contracts/" + contract_add + "/transactions"
+	//mare := map[string]interface{}{"order_by":,"limit":10,"fingerprint":}
+	//params := map[string]string{"identifier":"1003126"}
+	resp, err := Get(url, nil, nil)
+	//fmt.Println(resp)
+	if err != nil {
+		// handle error
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(body))
+	var df Accounts
+	errs := json.Unmarshal(body, &df)
+	if errs != nil {
+
+	}
+	fmt.Println(df.Succuss)
+	fmt.Println(reflect.TypeOf(df))
+}
 
 //Get http get method
 func Get(url string, params map[string]string, headers map[string]string) (*http.Response, error) {
