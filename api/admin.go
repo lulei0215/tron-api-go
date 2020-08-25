@@ -44,14 +44,7 @@ type Accounts struct {
 	Data       []map[string]interface{} `json:"data,omitempty"`
 	StatusCode int                      `json:statuscode",omitempty"`
 	Error      string                   `json:error",omitempty"`
-	//Success bool `json:"success"`
-	//Meta map[string]int `json:"meta"`
-	//Data interface{} `json:"data"`
-
 }
-
-//{"success":false,"statusCode":400,"error":"A valid account address is required."}
-
 //获取账户信息
 func account() {
 
